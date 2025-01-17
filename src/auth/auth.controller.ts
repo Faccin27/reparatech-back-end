@@ -1,4 +1,4 @@
-import { Controller, Get, HttpException, Logger, Res, UseGuards } from "@nestjs/common";
+import { Controller, Get, HttpException, Logger, Req, Res, UseGuards } from "@nestjs/common";
 import { GoogleStrategy } from "./auth.google.stategy";
 import { GoogleAuth } from "./guards/auth.google.guard";
 import { Response } from "express";
@@ -12,12 +12,12 @@ export class AuthController{
     @Get("/google/token")
     private async getOAuthAcessToken(){};
 
-    @Get(process.env.GOOGLE_CALLBACK_URL1)
-    private async callBackURL(@Res()res:Response):Promise<Response>{
+    @Get("/google/callback")
+    private async callBackURL(@Res()res:Response,@Req()req):Promise<Response>{
         try{
-            const token = await this.googleStreategy.validate();
+            const user = req.user;
 
-            return res.status(202).send(token)
+            return res.status(202).send(user);
         } catch(err){
             this.logger.error(`${err.message}`);
             throw new HttpException({server:`${err.message}`},err.status);
