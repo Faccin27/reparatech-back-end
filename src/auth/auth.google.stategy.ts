@@ -23,5 +23,5 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
         this.logger.debug(userInfo);
 
         done(null, userInfo);
-    }
-}
+    };
+};
