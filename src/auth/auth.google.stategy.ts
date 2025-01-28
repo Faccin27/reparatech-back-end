@@ -11,17 +11,38 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             callbackURL: process.env.GOOGLE_CALLBACK_URL,
-            scope: ["email", "profile", "https://www.googleapis.com/auth/calendar"],
+            scope: [
+                "email",
+                "profile",
+                "https://www.googleapis.com/auth/calendar",
+                "https://www.googleapis.com/auth/calendar.events"
+            ],
         });
     }
 
-    private async validate(accessToken?: string, refreshToken?: string, profile?: any, done?: VerifyCallback): Promise<any> {
-        const userInfo = {
-            token: accessToken,
-        };
+    async validate(
+        accessToken: string,
+        refreshToken: string,
+        profile: any,
+        done: VerifyCallback
+    ): Promise<any> {
+        try {
+            const userInfo = {
+                accessToken,
+                refreshToken,
+                email: profile.emails[0].value,
+                firstName: profile.name.givenName,
+                lastName: profile.name.familyName,
+                picture: profile.photos[0].value,
+            };
 
-        this.logger.debug(userInfo);
+            this.logger.debug('User authenticated successfully');
+            this.logger.debug(`Email: ${userInfo.email}`);
 
-        done(null, userInfo);
-    };
-};
+            done(null, userInfo);
+        } catch (error) {
+            this.logger.error(`Validation error: ${error.message}`);
+            done(error, null);
+        }
+    }
+}
