@@ -1,24 +1,28 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Logger } from '@nestjs/common';
-import * as dotenv from 'dotenv';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import * as express from 'express';
 
-dotenv.config();
+import { createServer, proxy } from 'aws-serverless-express';
+import { Context, Handler } from 'aws-lambda';
+
+const expressApp = express();
 
 async function bootstrap() {
-  const logger = new Logger('Bootstrap');
-  const app = await NestFactory.create(AppModule);
-
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(expressApp));
   app.enableCors({
     origin: 'http://localhost:3000',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   });
-
-  const port = process.env.PORT || 7865;
-  await app.listen(port);
-
-  logger.warn(`Application running on  http://localhost:${port}`);
+  await app.init();
 }
+
 bootstrap();
+
+const server = createServer(expressApp);
+
+export const handler: Handler = (event: any, context: Context) => {
+  return proxy(server, event, context);
+};
