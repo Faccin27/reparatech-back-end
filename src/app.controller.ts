@@ -6,5 +6,5 @@ export class AppCOntroler{
     @Get()
     public async hello(@Res()res:Response){
         return res.status(200).json({server:"Hello"});
-    }
+    };
 };
