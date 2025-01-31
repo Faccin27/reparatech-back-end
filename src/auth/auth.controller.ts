@@ -23,7 +23,7 @@ export class AuthController {
             
             // URL encode the token to handle special characters
             const encodedToken = encodeURIComponent(JSON.stringify(user));
-            const redirectUrl = `http://localhost:3000?token=${encodedToken}`;
+            const redirectUrl = `https://reparatech-3x56.vercel.app?token=${encodedToken}`;
             
             return res.redirect(redirectUrl);
         } catch (err) {
