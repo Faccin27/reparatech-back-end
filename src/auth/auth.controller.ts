@@ -20,7 +20,8 @@ export class AuthController {
     private async callBackURL(@Res() res: Response, @Req() req) {
         try {
             const user = req.user;
-            const encodedToken = encodeURIComponent(JSON.stringify(user));
+            // Pegando apenas o access_token do usuário
+            const token = user.accessToken;
             
             const html = `
                 <!DOCTYPE html>
@@ -28,7 +29,7 @@ export class AuthController {
                 <body>
                     <script>
                         window.opener.postMessage(
-                            { type: 'AUTH_SUCCESS', token: '${encodedToken}' }, 
+                            { type: 'AUTH_SUCCESS', token: '${token}' }, 
                             'https://reparatech-3x56.vercel.app'
                         );
                         window.close();
