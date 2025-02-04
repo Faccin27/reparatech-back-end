@@ -20,12 +20,24 @@ export class AuthController {
     private async callBackURL(@Res() res: Response, @Req() req) {
         try {
             const user = req.user;
-            
-            // URL encode the token to handle special characters
             const encodedToken = encodeURIComponent(JSON.stringify(user));
-            const redirectUrl = `https://reparatech-3x56.vercel.app?token=${encodedToken}`;
             
-            return res.redirect(redirectUrl);
+            const html = `
+                <!DOCTYPE html>
+                <html>
+                <body>
+                    <script>
+                        window.opener.postMessage(
+                            { type: 'AUTH_SUCCESS', token: '${encodedToken}' }, 
+                            'https://reparatech-3x56.vercel.app'
+                        );
+                        window.close();
+                    </script>
+                </body>
+                </html>
+            `;
+            
+            res.send(html);
         } catch (err) {
             this.logger.error(`Callback error: ${err.message}`);
             throw new HttpException({ server: `${err.message}` }, err.status || 500);
