@@ -30,7 +30,7 @@ export class AuthController {
                     <script>
                         window.opener.postMessage(
                             { type: 'AUTH_SUCCESS', token: '${token}' }, 
-                            'https://reparatech-3x56.vercel.app'
+                            'https://reparatech.pro'
                         );
                         window.close();
                     </script>
