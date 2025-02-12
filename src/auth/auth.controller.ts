@@ -54,7 +54,7 @@ export class AuthController {
                 throw new HttpException('Token não fornecido', 401);
             }
 
-            const calendarId = '67d70082a9e2eddf52395ab6317f2ff89194d183075f8fab355754e9691e9e6b@group.calendar.google.com';
+            const calendarId = 'f1cc058995fce383d99239343e209dc58edb1c52d75d662fb92417643f7950a7@group.calendar.google.com';
 
             try {
                 const response = await axios.post(
